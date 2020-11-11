@@ -42,7 +42,10 @@ app.use(passport.initialize());
 
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true });
+mongoose.connect(
+  "mongodb+srv://sujal:sujal@cluster0.qowfk.mongodb.net/userDB?retryWrites=true&w=majority",
+  { useNewUrlParser: true }
+);
 mongoose.set("useCreateIndex", true);
 // stackoverflow.com/questions/61091800/setting-up-facebook-authentication-with-mongodb-atlas-and-passport-js
 const userSchema = new mongoose.Schema({
@@ -86,21 +89,18 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/secrets",
+      callbackURL: "https://tellno1.herokuapp.com/auth/google/secrets",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     function (accessToken, refreshToken, profile, cb) {
       // this is a callback function
-      
-      console.log(profile);// logs their profile
+
+      console.log(profile); // logs their profile
 
       // now we install npm mongoose-findorcreate package to use findOrCreate() provided by passportJS
 
-
-//create of find this user on our database
-      User.findOrCreate({ googleId: profile.id}, function (err, user) {
-
-        
+      //create of find this user on our database
+      User.findOrCreate({ googleId: profile.id }, function (err, user) {
         return cb(err, user);
       });
     }
@@ -113,11 +113,10 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: "http://localhost:3000/auth/facebook/secrets",
+      callbackURL: "https://tellno1.herokuapp.com/auth/facebook/secrets",
     },
     function (accessToken, refreshToken, profile, cb) {
-
-         console.log(profile);
+      console.log(profile);
       User.findOrCreate({ facebookId: profile.id }, function (err, user) {
         return cb(err, user);
       });
